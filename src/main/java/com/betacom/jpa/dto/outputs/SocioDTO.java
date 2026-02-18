@@ -1,13 +1,13 @@
 package com.betacom.jpa.dto.outputs;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @ToString
 public class SocioDTO {
 
@@ -16,4 +16,6 @@ public class SocioDTO {
 	private String nome;
 	private String codiceFiscale;
 	private String email;
+	private CertificatoDTO certificato;
+	private List<AbbonamentoDTO> abbonamento;
 }
