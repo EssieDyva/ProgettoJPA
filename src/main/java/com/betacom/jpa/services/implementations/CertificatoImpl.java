@@ -1,10 +1,12 @@
 package com.betacom.jpa.services.implementations;
 
 
+import static com.betacom.jpa.utils.Utils.stringToDate;
+
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.CertificatoRequest;
 import com.betacom.jpa.dto.outputs.CertificatoDTO;
@@ -15,7 +17,6 @@ import com.betacom.jpa.models.Socio;
 import com.betacom.jpa.repository.ICertificatoRepository;
 import com.betacom.jpa.repository.ISocioRepository;
 import com.betacom.jpa.services.interfaces.ICertificatoServices;
-import static com.betacom.jpa.utils.Utils.stringToDate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +32,7 @@ public class CertificatoImpl implements ICertificatoServices{
 		this.socioR = socioR;
 	}
 
+	@Transactional (rollbackFor = Exception.class)
 	@Override
 	public void create(CertificatoRequest req) throws Exception {
 		log.debug("create {}", req);

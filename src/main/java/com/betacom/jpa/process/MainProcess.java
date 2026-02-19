@@ -3,14 +3,11 @@ package com.betacom.jpa.process;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.AbbonamentoRequest;
-import com.betacom.jpa.dto.inputs.CertificatoRequest;
+import com.betacom.jpa.dto.inputs.AttivitaRequest;
 import com.betacom.jpa.dto.inputs.SocioRequest;
 import com.betacom.jpa.dto.outputs.SocioDTO;
-import com.betacom.jpa.exceptions.AcademyException;
-import com.betacom.jpa.models.Socio;
 import com.betacom.jpa.services.interfaces.ICertificatoServices;
 import com.betacom.jpa.services.interfaces.ISocioServices;
 
@@ -24,11 +21,13 @@ public class MainProcess {
 	private final ICertificatoServices certS;
 	
 	private final ProcessTransaction pT;
+	private final ProcessAttivita pA;
 
-	public MainProcess(ISocioServices socioS, ProcessTransaction pT, ICertificatoServices certS) {
+	public MainProcess(ISocioServices socioS, ProcessTransaction pT, ICertificatoServices certS, ProcessAttivita pA) {
 		this.socioS = socioS;
 		this.pT = pT;
 		this.certS = certS;
+		this.pA = pA;
 	}
 
 	public void executeSocio() throws Exception {
@@ -47,12 +46,15 @@ public class MainProcess {
 //			reqC.setDataCertificato("04/05/2026");
 //			reqC.setSocioId(id);
 //			pT.insertCertificato(reqC);
-			
+//			
 //			pT.deleteSocio(8);
 //			ListSocioViaCertificato();
 //			insertAbbonamento(8);
 //			listSocio();
-			listSocioById(8);
+//			listSocioById(8);
+//			pA.createAttivita();
+//			pA.deleteAttivita(1);
+//			createAbbonamentoAttivita(1, 1);
 		} catch (Exception e) {
 			log.error("Errore found in process {}", e.getMessage());
 		}
@@ -92,6 +94,14 @@ public class MainProcess {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
+	}
+	
+	private void createAbbonamentoAttivita(int abbonamentoID, int attivitaID) throws Exception {
+		AttivitaRequest req = new AttivitaRequest();
+		req.setId(attivitaID);
+		req.setAbbonamentoID(abbonamentoID);
+		
+		pA.createAttivitaAbbonamento(req);
 	}
 	
 	
