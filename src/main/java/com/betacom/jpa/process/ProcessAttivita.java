@@ -17,11 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ProcessAttivita {
 	private final IAttivitaServices attS;
-	private final AbbonamentoImpl abbI;
 
-	public ProcessAttivita(IAttivitaServices attS, AbbonamentoImpl abbI) {
+	public ProcessAttivita(IAttivitaServices attS) {
 		this.attS = attS;
-		this.abbI = abbI;
 	}
 	
 	@Transactional (rollbackFor = Exception.class)
