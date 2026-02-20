@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 import com.betacom.jpa.dto.inputs.AbbonamentoRequest;
 import com.betacom.jpa.dto.inputs.AttivitaRequest;
 import com.betacom.jpa.dto.inputs.SocioRequest;
+import com.betacom.jpa.dto.outputs.AbbonamentoDTO;
+import com.betacom.jpa.dto.outputs.AttivitaDTO;
 import com.betacom.jpa.dto.outputs.SocioDTO;
+import com.betacom.jpa.services.interfaces.IAbbonamentoServices;
 import com.betacom.jpa.services.interfaces.ICertificatoServices;
 import com.betacom.jpa.services.interfaces.ISocioServices;
 
@@ -19,15 +22,17 @@ public class MainProcess {
 
 	private final ISocioServices socioS;
 	private final ICertificatoServices certS;
-	
+	private final IAbbonamentoServices abbS;
+
 	private final ProcessTransaction pT;
 	private final ProcessAttivita pA;
 
-	public MainProcess(ISocioServices socioS, ProcessTransaction pT, ICertificatoServices certS, ProcessAttivita pA) {
+	public MainProcess(ISocioServices socioS, ProcessTransaction pT, ICertificatoServices certS, ProcessAttivita pA, IAbbonamentoServices abbS) {
 		this.socioS = socioS;
 		this.pT = pT;
 		this.certS = certS;
 		this.pA = pA;
+		this.abbS = abbS;
 	}
 
 	public void executeSocio() throws Exception {
@@ -39,22 +44,25 @@ public class MainProcess {
 		req.setEmail("a.baglio@tim.com");
 
 		int id = 0;
-		
+
 		try {
-//			id = pT.aggiornamenti(req);
-//			CertificatoRequest reqC = new CertificatoRequest();
-//			reqC.setDataCertificato("04/05/2026");
-//			reqC.setSocioId(id);
-//			pT.insertCertificato(reqC);
-//			
-//			pT.deleteSocio(8);
-//			ListSocioViaCertificato();
-//			insertAbbonamento(8);
-//			listSocio();
-//			listSocioById(8);
-//			pA.createAttivita();
-//			pA.deleteAttivita(1);
-//			createAbbonamentoAttivita(1, 1);
+			//			id = pT.aggiornamenti(req);
+			//			CertificatoRequest reqC = new CertificatoRequest();
+			//			reqC.setDataCertificato("04/05/2026");
+			//			reqC.setSocioId(id);
+			//			pT.insertCertificato(reqC);
+			//			
+			//			pT.deleteSocio(8);
+			//			ListSocioViaCertificato();
+			//			insertAbbonamento(8);
+			//			listSocio();
+			//			listSocioById(8);
+			//			pA.createAttivita();
+			//			pA.deleteAttivita(1);
+			//			createAbbonamentoAttivita(1, 3);
+			//			pA.deleteAttivitaAbbonamento(1, 1);
+			listSocioExtended();
+
 		} catch (Exception e) {
 			log.error("Errore found in process {}", e.getMessage());
 		}
@@ -64,10 +72,10 @@ public class MainProcess {
 		AbbonamentoRequest req = new AbbonamentoRequest();
 		req.setDataIscrizione("01/02/2026");
 		req.setSocioId(socioId);
-		
+
 		pT.insertAbbonamento(req);
 	}
-	
+
 	private void listSocio() {
 		try {
 			List<SocioDTO> lS = socioS.findAll();
@@ -76,7 +84,7 @@ public class MainProcess {
 			log.error(e.getMessage());
 		}
 	}
-	
+
 	private void ListSocioViaCertificato() {
 		List<SocioDTO> lS;
 		try {
@@ -86,7 +94,7 @@ public class MainProcess {
 			log.error(e.getMessage());
 		}
 	}
-	
+
 	private void listSocioById(Integer id) {
 		try {
 			SocioDTO s = socioS.findById(id);
@@ -95,14 +103,32 @@ public class MainProcess {
 			log.error(e.getMessage());
 		}
 	}
-	
+
 	private void createAbbonamentoAttivita(int abbonamentoID, int attivitaID) throws Exception {
 		AttivitaRequest req = new AttivitaRequest();
 		req.setId(attivitaID);
 		req.setAbbonamentoID(abbonamentoID);
-		
+
 		pA.createAttivitaAbbonamento(req);
 	}
-	
-	
+
+	private void listSocioExtended() throws Exception {
+	    List<SocioDTO> lS = socioS.findAll();
+	    lS.forEach(s -> {
+	        try {
+	            List<AbbonamentoDTO> lAbb = abbS.getBySocio(s);
+	            lAbb.forEach(a -> {
+	                try {
+	                    pA.getByIdAbbonamento(a.getId());
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                }
+	            });
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    });
+	}
+
+
 }

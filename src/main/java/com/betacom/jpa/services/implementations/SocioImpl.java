@@ -108,6 +108,16 @@ public class SocioImpl implements ISocioServices{
 				.toList();
 	}
 	
+	@Transactional (rollbackFor = AcademyException.class)
+	@Override
+	public List<SocioDTO> findAllExtended() throws AcademyException {
+		log.debug("findAllExtended");
+		List<Socio> lS = socioR.findAll();
+		
+		
+		return null;
+	}
+	
 	private List<AbbonamentoDTO> buildAbbonamentoDTO(List<Abbonamento> lA) {
 		return lA.stream()
 				.map(a -> AbbonamentoDTO.builder()
@@ -137,4 +147,5 @@ public class SocioImpl implements ISocioServices{
 				.abbonamento(buildAbbonamentoDTO(s.getAbbonamento()))
 				.build();
 	}
+
 }

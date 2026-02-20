@@ -46,6 +46,11 @@ public class ProcessAttivita {
 	}
 	
 	@Transactional (rollbackFor = Exception.class)
+	public void deleteAttivitaAbbonamento(Integer idAbbonamento, Integer idAttivita) throws Exception {
+		attS.deleteAttivitaAbbonamento(idAbbonamento, idAttivita);
+	}
+	
+	@Transactional (rollbackFor = Exception.class)
 	public void deleteAttivita(Integer id) throws Exception {
 		attS.delete(id);
 	}
@@ -53,6 +58,15 @@ public class ProcessAttivita {
 	public void list() {
 		List<AttivitaDTO> lA = attS.listAttivita();
 		lA.forEach(a -> log.debug(a.toString()));
+	}
+	
+	@Transactional (rollbackFor = Exception.class)
+	public List<AttivitaDTO> getByIdAbbonamento(Integer id) throws Exception {
+	    List<AttivitaDTO> lAtt = attS.getByIdAbbonamento(id);
+	    for (AttivitaDTO att : lAtt) {
+	        log.debug("Attivita: {}", att.getDescription());
+	    }
+	    return lAtt;
 	}
 
 }

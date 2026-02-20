@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.AttivitaRequest;
+import com.betacom.jpa.dto.outputs.AbbonamentoDTO;
 import com.betacom.jpa.dto.outputs.AttivitaDTO;
 import com.betacom.jpa.exceptions.AcademyException;
 import com.betacom.jpa.models.Abbonamento;
@@ -83,6 +84,7 @@ public class AttivitaImpl implements IAttivitaServices{
 						).toList();
 	}
 
+	@Transactional (rollbackFor = Exception.class)
 	@Override
 	public void createAttivitaAbbonamento(AttivitaRequest req) throws Exception {
 		log.debug("createAttivitaAbbonamento {}", req);
@@ -91,9 +93,45 @@ public class AttivitaImpl implements IAttivitaServices{
 		Abbonamento ab = abbR.findById(req.getAbbonamentoID())
 				.orElseThrow(() -> new AcademyException("Abbonamento non trovato"));
 		
-		ab.getAttivitas().add(at); // update whith new attivita
+		if(!ab.getAttivitas().contains(at)) {
+			ab.getAttivitas().add(at); // update whith new attivita
+			abbR.save(ab);
+		} else {
+			throw new AcademyException("Attivita presente nell'abbonamento");
+		}
+		
+	}
+
+	@Transactional (rollbackFor = Exception.class)
+	@Override
+	public void deleteAttivitaAbbonamento(Integer idAbbonamento, Integer idAttivita) throws Exception {
+		log.debug("deleteAttivitaAbbonamento {} / {}", idAbbonamento, idAttivita);
+		Abbonamento ab = abbR.findById(idAbbonamento)
+				.orElseThrow(() -> new AcademyException("Abbonamento non trovato"));
+		
+		ab.getAttivitas().stream()
+			.filter(a -> a.getId() == idAttivita)
+			.findFirst()
+			.ifPresent(ab.getAttivitas()::remove);
+		
 		abbR.save(ab);
 		
 	}
+
+	@Transactional (rollbackFor = Exception.class)
+	@Override
+	public List<AttivitaDTO> getByIdAbbonamento(Integer id) throws Exception {
+		log.debug("getByIdAbbonamento {}", id);
+		Abbonamento ab = abbR.findById(id)
+				.orElseThrow(() -> new AcademyException("Abbonamento non trovato"));
+		
+		return ab.getAttivitas().stream()
+				.map(a -> AttivitaDTO.builder()
+						.id(a.getId())
+						.description(a.getDescription())
+						.build()).toList();
+	}
+
+	
 
 }
