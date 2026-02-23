@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.AttivitaRequest;
-import com.betacom.jpa.dto.outputs.AbbonamentoDTO;
 import com.betacom.jpa.dto.outputs.AttivitaDTO;
 import com.betacom.jpa.exceptions.AcademyException;
 import com.betacom.jpa.models.Abbonamento;
@@ -15,19 +14,16 @@ import com.betacom.jpa.repository.IAbbonamentoRepository;
 import com.betacom.jpa.repository.IAttivitaRepository;
 import com.betacom.jpa.services.interfaces.IAttivitaServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class AttivitaImpl implements IAttivitaServices{
 	
 	private final IAttivitaRepository attR;
 	private final IAbbonamentoRepository abbR;
-	
-	public AttivitaImpl(IAttivitaRepository attR, IAbbonamentoRepository abbR) {
-		this.attR = attR;
-		this.abbR = abbR;
-	}
 
 	@Transactional (rollbackFor = Exception.class)
 	@Override

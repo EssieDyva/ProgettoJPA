@@ -17,17 +17,15 @@ import com.betacom.jpa.models.Socio;
 import com.betacom.jpa.repository.ISocioRepository;
 import com.betacom.jpa.services.interfaces.ISocioServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class SocioImpl implements ISocioServices{
 
 	private final ISocioRepository socioR;
-
-	public SocioImpl(ISocioRepository socioR) {
-		this.socioR = socioR;
-	}
 	
 	@Transactional (rollbackFor = AcademyException.class)
 	@Override

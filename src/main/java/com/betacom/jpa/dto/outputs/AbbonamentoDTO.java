@@ -1,6 +1,7 @@
 package com.betacom.jpa.dto.outputs;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class AbbonamentoDTO {
 
 	private Integer id;
 	private LocalDate dataIscrizione;
+	private List<AttivitaDTO> attivita;
 }

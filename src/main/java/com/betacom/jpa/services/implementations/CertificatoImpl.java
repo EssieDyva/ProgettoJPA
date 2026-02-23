@@ -18,19 +18,16 @@ import com.betacom.jpa.repository.ICertificatoRepository;
 import com.betacom.jpa.repository.ISocioRepository;
 import com.betacom.jpa.services.interfaces.ICertificatoServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class CertificatoImpl implements ICertificatoServices{
 
 	private final ICertificatoRepository certR;
 	private final ISocioRepository socioR;
-	
-	public CertificatoImpl(ICertificatoRepository certR, ISocioRepository socioR) {
-		this.certR = certR;
-		this.socioR = socioR;
-	}
 
 	@Transactional (rollbackFor = Exception.class)
 	@Override
