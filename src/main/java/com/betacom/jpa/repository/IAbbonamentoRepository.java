@@ -14,4 +14,5 @@ import com.betacom.jpa.models.Socio;
 public interface IAbbonamentoRepository extends JpaRepository<Abbonamento, Integer>{
 
 	List<Abbonamento> getAllBySocio(Socio socio);
+	Abbonamento getBySocio(Socio socio);
 }

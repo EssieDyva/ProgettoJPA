@@ -34,7 +34,7 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 	public void create(AbbonamentoRequest req) throws Exception {
 		log.debug("create {}", req);
 		Socio soc = socioR.findById(req.getSocioId())
-				.orElseThrow(() -> new AcademyException("Socio nontrovato in DB: " + req.getSocioId()));
+				.orElseThrow(() -> new AcademyException("Socio non trovato in DB: " + req.getSocioId()));
 		
 		Abbonamento abb = new Abbonamento();
 		abb.setDataIscrizione(stringToDate(req.getDataIscrizione()));
@@ -75,6 +75,31 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 	                    .dataIscrizione(a.getDataIscrizione())
 	                    .build()
 	                    ).collect(Collectors.toList());
+	}
+
+	@Override
+	public void update(AbbonamentoRequest req) throws Exception {
+		log.debug("create {}", req);
+		Socio soc = socioR.findById(req.getSocioId())
+				.orElseThrow(() -> new AcademyException("Socio nontrovato in DB: " + req.getSocioId()));
+		
+		Abbonamento abb = abbR.getBySocio(soc);
+		abb.setDataIscrizione(stringToDate(req.getDataIscrizione()));
+		abb.setSocio(soc);
+		
+		abbR.save(abb);
+	}
+
+	@Override
+	public List<AbbonamentoDTO> list() throws Exception {
+		log.debug("list {}");
+		List<Abbonamento> lA = abbR.findAll();
+		return lA.stream()
+				.map(a -> AbbonamentoDTO.builder()
+						.id(a.getId())
+						.dataIscrizione(a.getDataIscrizione())
+						.build())
+				.collect(Collectors.toList());
 	}
 
 }
