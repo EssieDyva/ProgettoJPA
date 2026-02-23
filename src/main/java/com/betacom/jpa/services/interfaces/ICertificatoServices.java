@@ -8,4 +8,5 @@ import com.betacom.jpa.dto.outputs.SocioDTO;
 public interface ICertificatoServices {
 	void create(CertificatoRequest req) throws Exception;
 	List<SocioDTO> listSocio() throws Exception;
+	void update(CertificatoRequest req) throws Exception;
 }

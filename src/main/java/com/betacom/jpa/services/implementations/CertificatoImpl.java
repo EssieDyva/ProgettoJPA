@@ -21,6 +21,8 @@ import com.betacom.jpa.services.interfaces.ICertificatoServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.betacom.jpa.utils.Utils.stringToDate;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -63,5 +65,18 @@ public class CertificatoImpl implements ICertificatoServices{
 						.build())
 				.toList();
 	}
+
+	@Override
+	public void update(CertificatoRequest req) throws Exception {
+		log.debug("update {}", req);
+		Certificato cert = certR.findById(req.getId())
+				.orElseThrow(() -> new AcademyException("Certificato non trovato con ID:" + req.getId()));
+		
+		cert.setDataCertificato(stringToDate(req.getDataCertificato()));
+		cert.setTipo(req.getTipo());
+		
+		certR.save(cert);
+	}
+	
 
 }
