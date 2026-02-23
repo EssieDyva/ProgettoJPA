@@ -43,7 +43,7 @@ public class AbbonamentoController {
 		HttpStatus status = HttpStatus.OK;
 		try {
 			abbonamentoServices.create(request);
-			r.setMsg("Certificato creato");
+			r.setMsg("Abbonamento creato");
 		} catch (Exception e) {
 			r.setMsg("Errore nella creazione" + e.getMessage());
 			status = HttpStatus.BAD_REQUEST;
@@ -57,7 +57,7 @@ public class AbbonamentoController {
 		HttpStatus status = HttpStatus.OK;
 		try {
 			abbonamentoServices.update(request);
-			r.setMsg("Certificato creato");
+			r.setMsg("Abbonamento aggiornato");
 		} catch (Exception e) {
 			r.setMsg("Errore nella creazione" + e.getMessage());
 			status = HttpStatus.BAD_REQUEST;
