@@ -1,14 +1,14 @@
 package com.betacom.jpa.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.betacom.jpa.models.Socio;
-import java.util.List;
-
-
 
 @Repository
 public interface ISocioRepository extends JpaRepository<Socio, Integer>{
@@ -16,4 +16,13 @@ public interface ISocioRepository extends JpaRepository<Socio, Integer>{
 
 	List<Socio> findByCognomeContaining(String pattern); // like
 	List<Socio> findByCognomeAndNome(String cognome, String nome);
+	
+	@Query(name = "socio.selectByAttivita")
+	List<Socio> searchByAttivita(@Param("attivita") String attivita);
+	
+	@Query(name = "socio.selectByFilter")
+	List<Socio> searchByFilter(@Param("id") Integer id,
+								@Param("nome") String nome,
+								@Param("cognome") String cognome,
+								@Param("attivita") Integer attivita);
 }

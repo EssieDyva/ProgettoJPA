@@ -2,13 +2,13 @@ package com.betacom.jpa.services.implementations;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.SocioRequest;
 import com.betacom.jpa.dto.outputs.AbbonamentoDTO;
+import com.betacom.jpa.dto.outputs.AttivitaDTO;
 import com.betacom.jpa.dto.outputs.CertificatoDTO;
 import com.betacom.jpa.dto.outputs.SocioDTO;
 import com.betacom.jpa.exceptions.AcademyException;
@@ -86,34 +86,12 @@ public class SocioImpl implements ISocioServices{
 	}
 
 	@Override
-	public List<SocioDTO> findAll() throws AcademyException {
-		log.debug("findAll");
-		List<Socio> lS = socioR.findAll();
-		return lS.stream()
-				.map(s -> SocioDTO.builder()
-						.id(s.getId())
-						.cognome(s.getCognome())
-						.nome(s.getNome())
-						.codiceFiscale(s.getCodiceFiscale())
-						.email(s.getEmail())
-						.certificato((s.getCertificato() == null) ? null :CertificatoDTO.builder()
-								.id(s.getCertificato().getId())
-								.tipo(s.getCertificato().getTipo())
-								.dataCertificato(s.getCertificato().getDataCertificato())
-								.build())
-						.abbonamento(buildAbbonamentoDTO(s.getAbbonamento()))
-						.build())
-				.toList();
+	public List<SocioDTO> find(Integer id, String nome, String cognome, Integer attivita) throws AcademyException {
+		log.debug("find {} / {} / {} / {}", id, nome, cognome, attivita);
+		List<Socio> lS = socioR.searchByFilter(id, nome, cognome, attivita);
+		return buildSocioDTO(lS);
 	}
 	
-	private List<AbbonamentoDTO> buildAbbonamentoDTO(List<Abbonamento> lA) {
-		return lA.stream()
-				.map(a -> AbbonamentoDTO.builder()
-						.id(a.getId())
-						.dataIscrizione(a.getDataIscrizione())
-						.build()
-						).collect(Collectors.toList());
-	}
 
 	@Override
 	public SocioDTO findById(Integer id) throws Exception {
@@ -136,4 +114,47 @@ public class SocioImpl implements ISocioServices{
 				.build();
 	}
 
+	@Override
+	public List<SocioDTO> findByAttivita(String attivita) throws Exception {
+		log.debug("findByattivita {}", attivita);
+		List<Socio> lS = socioR.searchByAttivita(attivita.toUpperCase());
+		
+		return buildSocioDTO(lS);
+	}
+
+	
+	private List<AbbonamentoDTO> buildAbbonamentoDTO(List<Abbonamento> lA) {
+	    return lA.stream()
+	            .map(a -> AbbonamentoDTO.builder()
+	                    .id(a.getId())
+	                    .dataIscrizione(a.getDataIscrizione())
+	                    .attivita(
+	                            a.getAttivitas().stream()
+	                                    .map(att -> AttivitaDTO.builder()
+	                                            .id(att.getId())
+	                                            .description(att.getDescription())
+	                                            .build()
+	                                    ).toList()
+	                    ).build()
+	            ).toList();
+	}
+	
+	private List<SocioDTO> buildSocioDTO(List<Socio> lS) {
+		return lS.stream()
+				.map(s -> SocioDTO.builder()
+						.id(s.getId())
+						.cognome(s.getCognome())
+						.nome(s.getNome())
+						.codiceFiscale(s.getCodiceFiscale())
+						.email(s.getEmail())
+						.certificato((s.getCertificato() == null) ? null :CertificatoDTO.builder()
+								.id(s.getCertificato().getId())
+								.tipo(s.getCertificato().getTipo())
+								.dataCertificato(s.getCertificato().getDataCertificato())
+								.build())
+						.abbonamento(buildAbbonamentoDTO(s.getAbbonamento()))
+						.build())
+				.toList();
+	}
+	
 }

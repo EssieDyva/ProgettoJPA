@@ -90,7 +90,7 @@ public class AttivitaImpl implements IAttivitaServices{
 				.orElseThrow(() -> new AcademyException("Abbonamento non trovato"));
 		
 		if(!ab.getAttivitas().contains(at)) {
-			ab.getAttivitas().add(at); // update whith new attivita
+			ab.getAttivitas().add(at);
 			abbR.save(ab);
 		} else {
 			throw new AcademyException("Attivita presente nell'abbonamento");

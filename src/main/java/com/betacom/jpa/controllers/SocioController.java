@@ -24,21 +24,25 @@ import lombok.RequiredArgsConstructor;
 public class SocioController {
 
 	private final ISocioServices socioServices;
-	
+
 	@GetMapping("list")
-	public ResponseEntity<Object> listSocio() {
+	public ResponseEntity<Object> findByFilter(@RequestParam (required = false) Integer id,
+												@RequestParam (required = false) String nome,
+												@RequestParam (required = false) String cognome,
+												@RequestParam (required = false) Integer attivita) {
+
 		Object r = new Object();
 		HttpStatus status = HttpStatus.OK;
 		try {
-			r = socioServices.findAll();
+			r = socioServices.findById(id);
 		} catch (Exception e) {
 			r = e.getMessage();
 			status = HttpStatus.BAD_REQUEST;
 		}
 		return ResponseEntity.status(status).body(r);
 	}
-	
-	@GetMapping("byId")
+
+	@GetMapping("findById")
 	public ResponseEntity<Object> findById(@RequestParam (required = true) Integer id) {
 
 		Object r = new Object();
@@ -51,7 +55,21 @@ public class SocioController {
 		}
 		return ResponseEntity.status(status).body(r);
 	}
-	
+
+	@GetMapping("findByAttivita")
+	public ResponseEntity<Object> findById(@RequestParam (required = true) String attivita) {
+
+		Object r = new Object();
+		HttpStatus status = HttpStatus.OK;
+		try {
+			r = socioServices.findByAttivita(attivita);
+		} catch (Exception e) {
+			r = e.getMessage();
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(status).body(r);
+	}
+
 	@PostMapping("create")
 	public ResponseEntity<Resp> create(@RequestBody (required = true) SocioRequest request) {
 		Resp r = new Resp();
@@ -65,7 +83,7 @@ public class SocioController {
 		}
 		return ResponseEntity.status(status).body(r);
 	}
-	
+
 	@PutMapping("update")
 	public ResponseEntity<Resp> update(@RequestBody (required = true) SocioRequest request) {
 		Resp r = new Resp();
@@ -79,7 +97,7 @@ public class SocioController {
 		}
 		return ResponseEntity.status(status).body(r);
 	}
-	
+
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<Resp> delete(@PathVariable Integer id) {
 		Resp r = new Resp();

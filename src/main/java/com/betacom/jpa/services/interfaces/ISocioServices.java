@@ -9,8 +9,10 @@ import com.betacom.jpa.exceptions.AcademyException;
 public interface ISocioServices {
 
 	Integer create(SocioRequest req) throws AcademyException;
-	List<SocioDTO> findAll() throws AcademyException;
+	List<SocioDTO> find(Integer id, String nome, String cognome, Integer attivita) throws AcademyException;
 	void update(SocioRequest req) throws AcademyException;
 	void delete(Integer id) throws AcademyException;
 	SocioDTO findById(Integer id) throws Exception;
+	List<SocioDTO> findByAttivita(String attivita) throws Exception;
+	
 }
