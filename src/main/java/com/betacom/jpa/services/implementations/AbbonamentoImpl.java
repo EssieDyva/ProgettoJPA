@@ -10,11 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.jpa.dto.inputs.AbbonamentoRequest;
 import com.betacom.jpa.dto.outputs.AbbonamentoDTO;
+import com.betacom.jpa.dto.outputs.AttivitaDTO;
 import com.betacom.jpa.dto.outputs.SocioDTO;
 import com.betacom.jpa.exceptions.AcademyException;
 import com.betacom.jpa.models.Abbonamento;
+import com.betacom.jpa.models.Attivita;
 import com.betacom.jpa.models.Socio;
 import com.betacom.jpa.repository.IAbbonamentoRepository;
+import com.betacom.jpa.repository.IAttivitaRepository;
 import com.betacom.jpa.repository.ISocioRepository;
 import com.betacom.jpa.services.interfaces.IAbbonamentoServices;
 
@@ -28,6 +31,7 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 
 	private final IAbbonamentoRepository abbR;
 	private final ISocioRepository socioR;
+	private final IAttivitaRepository attR;
 
 	@Transactional (rollbackFor = Exception.class)
 	@Override
@@ -43,6 +47,7 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 		abbR.save(abb);
 	}
 
+	@Transactional (rollbackFor = Exception.class)
 	@Override
 	public void delete(Integer id) throws Exception {
 		log.debug("delete {}", id);
@@ -60,6 +65,7 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 		abbR.delete(abb);
 	}
 
+	@Transactional (rollbackFor = Exception.class)
 	@Override
 	public List<AbbonamentoDTO> getBySocio(SocioDTO soc) throws Exception {
 	    log.debug("getBySocio {}", soc);
@@ -77,6 +83,7 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 	                    ).collect(Collectors.toList());
 	}
 
+	@Transactional (rollbackFor = Exception.class)
 	@Override
 	public void update(AbbonamentoRequest req) throws Exception {
 		log.debug("create {}", req);
@@ -93,13 +100,59 @@ public class AbbonamentoImpl implements IAbbonamentoServices{
 	@Override
 	public List<AbbonamentoDTO> list() throws Exception {
 		log.debug("list {}");
-		List<Abbonamento> lA = abbR.findAll();
-		return lA.stream()
-				.map(a -> AbbonamentoDTO.builder()
-						.id(a.getId())
-						.dataIscrizione(a.getDataIscrizione())
-						.build())
-				.collect(Collectors.toList());
+	    
+	    List<Abbonamento> lA = abbR.findAll();
+
+	    return lA.stream()
+	            .map(a -> AbbonamentoDTO.builder()
+	                    .id(a.getId())
+	                    .dataIscrizione(a.getDataIscrizione())
+	                    .attivita(
+	                        a.getAttivitas().stream()
+	                            .map(att -> AttivitaDTO.builder()
+	                                    .id(att.getId())
+	                                    .description(att.getDescription())
+	                                    .build()
+	                            )
+	                            .collect(Collectors.toList())
+	                    )
+	                    .build()
+	            )
+	            .collect(Collectors.toList());
 	}
 
+	@Transactional (rollbackFor = Exception.class)
+	@Override
+	public AbbonamentoDTO aggiungiAttivita(Integer abbonamentoId, Integer attivitaId) throws Exception {
+		
+		Abbonamento abb = abbR.findById(abbonamentoId)
+	            .orElseThrow(() -> new RuntimeException("Abbonamento non trovato"));
+
+	    Attivita att = attR.findById(attivitaId)
+	            .orElseThrow(() -> new RuntimeException("Attività non trovata"));
+
+	    if (!abb.getAttivitas().contains(att)) {
+	        abb.getAttivitas().add(att);
+	    }
+
+	    return mapToDTO(abb);
+		
+	}
+
+	private AbbonamentoDTO mapToDTO(Abbonamento abb) {
+
+	    List<AttivitaDTO> lAt = abb.getAttivitas()
+	            .stream()
+	            .map(a -> AttivitaDTO.builder()
+	                    .id(a.getId())
+	                    .description(a.getDescription())
+	                    .build())
+	            .toList();
+
+	    return AbbonamentoDTO.builder()
+	            .id(abb.getId())
+	            .dataIscrizione(abb.getDataIscrizione())
+	            .attivita(lAt)
+	            .build();
+	}
 }

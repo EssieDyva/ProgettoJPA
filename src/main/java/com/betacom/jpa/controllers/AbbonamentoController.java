@@ -51,6 +51,20 @@ public class AbbonamentoController {
 		return ResponseEntity.status(status).body(r);
 	}
 	
+	@PostMapping("/{abbonamentoId}/attivita/{attivitaId}")
+	public ResponseEntity<Resp> aggiungiAttivita(@PathVariable Integer abbonamentoId, @PathVariable Integer attivitaId) {
+		Resp r = new Resp();
+		HttpStatus status = HttpStatus.OK;
+	    try {
+			abbonamentoServices.aggiungiAttivita(abbonamentoId, attivitaId);
+			r.setMsg("Attivita aggiunta all'abbonamento");
+		} catch (Exception e) {
+			r.setMsg("Errore nella creazione" + e.getMessage());
+			status = HttpStatus.BAD_REQUEST;
+		}
+	    return ResponseEntity.status(status).body(r);
+	}
+	
 	@PutMapping("update")
 	public ResponseEntity<Resp> update(@RequestBody (required = true) AbbonamentoRequest request) {
 		Resp r = new Resp();
